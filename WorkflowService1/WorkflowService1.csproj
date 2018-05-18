@@ -64,6 +64,8 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
+    <Compile Include="ExperimentalWorkflow.cs" />
+    <Compile Include="IExperimentalWorkflow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
