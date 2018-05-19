@@ -8,11 +8,14 @@ namespace WorkflowService1
 {
     public class ExperimentalWorkflow : Activity
     {
+        const string companyUrl = "http://www.acme.com/";
+
         protected override Func<Activity> Implementation
         {
             get
             {
-                return () => {
+                return () => 
+                {
                     var requestVar = new Variable<int>()
                     {
                         Name = "request"
@@ -20,37 +23,46 @@ namespace WorkflowService1
 
                     var receiveActivity = new Receive()
                     {
-                        DisplayName = "ExperimentalWorkflow_Receive",
-                        OperationName = "Receive",
-                        ServiceContractName = (XName)"{http://www.acme.com/}IExperimentalWorkflow",
-                        Action = "http://www.acme.com/IExperimentalWorkflow/Receive",
+                        DisplayName = $"{nameof(IExperimentalWorkflow)}_{nameof(IExperimentalWorkflow.Square)}",
+                        OperationName = "Square",
+                        ServiceContractName = (XName)$"{{{companyUrl}}}{nameof(IExperimentalWorkflow)}",
+                        Action = $"{companyUrl}{nameof(IExperimentalWorkflow)}/{nameof(IExperimentalWorkflow.Square)}",
                         CanCreateInstance = true,
                         Content = new ReceiveParametersContent()
                         {
-                            Parameters = {
-                                        {
-                                            "Request",
-                                            new OutArgument<int>(requestVar)
-                                        }
-                                    }
+                            Parameters =
+                            {
+                                {
+                                    "Request", new OutArgument<int>(requestVar)
+                                }
+                            }
                         }
                     };
 
                     var sequence = new Sequence()
                     {
-                        Variables = {
+                        Variables =
+                        {
                             requestVar
                         },
-                        Activities = {
+                        Activities =
+                        {
                             receiveActivity,
-                            new SendReply() {
-                                DisplayName = "ExperimentalWorkflow_SendReply",
+                            new Assign<int>
+                            {
+                                To = new OutArgument<int>((env) => requestVar.Get(env)),
+                                Value = new InArgument<int>((env) => requestVar.Get(env) * requestVar.Get(env))
+                            },
+                            new SendReply()
+                            {
+                                DisplayName =  $"{nameof(IExperimentalWorkflow)}_SendReply",
                                 Request = receiveActivity,
-                                Content = new SendParametersContent() {
-                                    Parameters = {
+                                Content = new SendParametersContent()
+                                {
+                                    Parameters =
+                                    {
                                         {
-                                            "Response",
-                                            new InArgument<int>(requestVar)
+                                            "Response", new InArgument<int>(requestVar)
                                         }
                                     }
                                 }

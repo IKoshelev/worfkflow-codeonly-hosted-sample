@@ -6,11 +6,11 @@ using System.Text;
 
 namespace WorkflowService1
 {
-    [ServiceContract(Name = "IExperimentalWorkflow")]
+    [ServiceContract(Name = nameof(IExperimentalWorkflow))]
     public interface IExperimentalWorkflow
     {
-        [OperationContract(Name = "Receive")]
-        int Receive(int requestVar);
+        [OperationContract(Name = nameof(IExperimentalWorkflow.Square))]
+        int Square(int requestVar);
 
     }
 }
